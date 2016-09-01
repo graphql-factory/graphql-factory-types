@@ -40,6 +40,7 @@ let types = {
     }
   }
 }
+
 let schemas = {
   Log: {
     query: 'LogQuery'
