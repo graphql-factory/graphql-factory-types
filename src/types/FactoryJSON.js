@@ -7,6 +7,7 @@ function identity(value) {
 }
 
 function parseLiteral (ast) {
+  let boundParseLiteral = parseLiteral.bind(this)
   let { Kind } = this.graphql
   switch (ast.kind) {
     case Kind.STRING:
@@ -18,12 +19,12 @@ function parseLiteral (ast) {
     case Kind.OBJECT: {
       const value = Object.create(null)
       ast.fields.forEach(field => {
-        value[field.name.value] = parseLiteral(field.value)
+        value[field.name.value] = boundParseLiteral(field.value)
       })
       return value
     }
     case Kind.LIST:
-      return ast.values.map(parseLiteral)
+      return ast.values.map(boundParseLiteral)
     default:
       return null
   }

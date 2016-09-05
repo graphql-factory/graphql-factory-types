@@ -57,6 +57,7 @@ function identity(value) {
 }
 
 function parseLiteral(ast) {
+  var boundParseLiteral = parseLiteral.bind(this);
   var Kind = this.graphql.Kind;
 
   switch (ast.kind) {
@@ -71,7 +72,7 @@ function parseLiteral(ast) {
         var _ret = function () {
           var value = Object.create(null);
           ast.fields.forEach(function (field) {
-            value[field.name.value] = parseLiteral(field.value);
+            value[field.name.value] = boundParseLiteral(field.value);
           });
           return {
             v: value
@@ -81,7 +82,7 @@ function parseLiteral(ast) {
         if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
       }
     case Kind.LIST:
-      return ast.values.map(parseLiteral);
+      return ast.values.map(boundParseLiteral);
     default:
       return null;
   }
