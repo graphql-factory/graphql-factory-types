@@ -16,6 +16,7 @@ function coerceDate (value) {
 export default {
   type: 'Scalar',
   name: 'FactoryDateTime',
+  description: 'Represents a Date object',
   serialize: coerceDate,
   parseValue: coerceDate,
   parseLiteral (ast) {

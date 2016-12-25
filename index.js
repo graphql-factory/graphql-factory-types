@@ -2,6 +2,30 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var FactoryBase64 = {
+  type: 'Scalar',
+  name: 'FactoryBase64',
+  description: 'Converts value to and from base64',
+  serialize: function serialize(value) {
+    return new Buffer(value, 'base64').toString();
+  },
+  parseValue: function parseValue(value) {
+    return new Buffer(value).toString('base64');
+  },
+  parseLiteral: function parseLiteral(ast) {
+    var _graphql = this.graphql,
+        GraphQLError = _graphql.GraphQLError,
+        Kind = _graphql.Kind;
+
+
+    if (ast.kind !== Kind.STRING) {
+      throw new GraphQLError('Query error: expected Base64 to be a string but got a: ' + ast.kind, [ast]);
+    }
+
+    return new Buffer(ast.value).toString('base64');
+  }
+};
+
 /*
  * Ported type from https://github.com/soundtrackyourbrand/graphql-custom-datetype
  */
@@ -20,12 +44,13 @@ function coerceDate(value) {
 var FactoryDateTime = {
   type: 'Scalar',
   name: 'FactoryDateTime',
+  description: 'Represents a Date object',
   serialize: coerceDate,
   parseValue: coerceDate,
   parseLiteral: function parseLiteral(ast) {
-    var _graphql = this.graphql;
-    var GraphQLError = _graphql.GraphQLError;
-    var Kind = _graphql.Kind;
+    var _graphql = this.graphql,
+        GraphQLError = _graphql.GraphQLError,
+        Kind = _graphql.Kind;
 
 
     if (ast.kind !== Kind.STRING) {
@@ -42,10 +67,41 @@ var FactoryDateTime = {
   }
 };
 
+var FactoryEmail = {
+  type: 'Scalar',
+  name: 'FactoryEmail',
+  description: 'The Email scalar type represents E-Mail addresses compliant to RFC 822.',
+  serialize: function serialize(value) {
+    return value;
+  },
+  parseValue: function parseValue(value) {
+    return value;
+  },
+  parseLiteral: function parseLiteral(ast) {
+    var _graphql = this.graphql,
+        GraphQLError = _graphql.GraphQLError,
+        Kind = _graphql.Kind;
+
+    // regex taken from https://github.com/stylesuxx/graphql-custom-types
+
+    var rx = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+    if (ast.kind !== Kind.STRING) {
+      throw new GraphQLError('Query error: expected Email to be a string but got a: ' + ast.kind, [ast]);
+    }
+
+    if (!ast.value.match(rx)) {
+      throw new GraphQLError('Query error: invalid Email', [ast]);
+    }
+
+    return ast.value;
+  }
+};
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
 /*
@@ -97,12 +153,47 @@ var FactoryJSON = {
   parseLiteral: parseLiteral
 };
 
+var FactoryURL = {
+  type: 'Scalar',
+  name: 'FactoryURL',
+  description: 'The URL scalar type represents URL addresses.',
+  serialize: function serialize(value) {
+    return value;
+  },
+  parseValue: function parseValue(value) {
+    return value;
+  },
+  parseLiteral: function parseLiteral(ast) {
+    var _graphql = this.graphql,
+        GraphQLError = _graphql.GraphQLError,
+        Kind = _graphql.Kind;
+
+    // regex taken from https://github.com/stylesuxx/graphql-custom-types
+
+    var rx = new RegExp('^(?:(?:https?|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?!(?:10|127)(?:\\.\\d{1,3}){3})(?!(?:169\\.254|192\\.168)(?:\\.\\d{1,3}){2})(?!172\\.(?:1[6-9]|2\\d|3[0-1])(?:\\.\\d{1,3}){2})(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#]\\S*)?$', 'i');
+
+    if (ast.kind !== Kind.STRING) {
+      throw new GraphQLError('Query error: expected URL to be a string but got a: ' + ast.kind, [ast]);
+    }
+
+    if (!ast.value.match(rx)) {
+      throw new GraphQLError('Query error: invalid URL', [ast]);
+    }
+
+    return ast.value;
+  }
+};
+
 var types = {
+  FactoryBase64: FactoryBase64,
   FactoryDateTime: FactoryDateTime,
-  FactoryJSON: FactoryJSON
+  FactoryEmail: FactoryEmail,
+  FactoryJSON: FactoryJSON,
+  FactoryURL: FactoryURL
 };
 
 var index = {
+  name: 'GraphQLFactoryTypes',
   types: types
 };
 

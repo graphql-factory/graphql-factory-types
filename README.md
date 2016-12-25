@@ -2,8 +2,11 @@
 Custom types plugin for graphql-factory
 
 ### Custom Types
+* `FactroyBase64`
 * `FactoryDateTime`
+* `FactoryEmail`
 * `FactoryJSON`
+* `FactoryURL`
 
 ### Example
 Create a simple type and schema in `graphql-factory` and execute a query
@@ -64,4 +67,6 @@ lib.Log('{ getLog { timestamp, message, info } }')
 The following types were ported to graphql-factory format but all credit goes to the original developers.
 
 * `FactoryDateTime` ported from [`graphql-custom-datetype`](https://github.com/soundtrackyourbrand/graphql-custom-datetype)
+* `FactoryEmail` ported from [`graphql-custom-types`](https://github.com/stylesuxx/graphql-custom-types)
 * `FactoryJSON` ported from [`graphql-type-json`](https://github.com/taion/graphql-type-json)
+* `FactoryURL` ported from [`graphql-custom-types`](https://github.com/stylesuxx/graphql-custom-types)
